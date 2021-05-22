@@ -1,6 +1,7 @@
 <script>
   export let todo;
   export let removeTodo;
+  export let toggleTodo;
   let editing;
   import { tick } from 'svelte'
 
@@ -16,7 +17,7 @@
 
 <li class:completed={todo.completed} class:editing={editing} on:pointerleave={() => editing = false}>
   <div class="view">
-    <input class="toggle" type="checkbox" checked={todo.completed} on:change={() => todo.completed = !todo.completed}>
+    <input class="toggle" type="checkbox" checked={todo.completed} on:change={() => toggleTodo(todo) }>
     {#if editing}
       <input class="edit" type="text" bind:value={todo.name} on:keypress={onKeyPress} use:focusInput>
     {:else}

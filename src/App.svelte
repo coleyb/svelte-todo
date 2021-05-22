@@ -2,7 +2,6 @@
   import TodoTask from './components/TodoTask.svelte'
   export let placeholder = "What needs to be done?";
   export let value = '';
-  export let ref = null;
   export let todos = [];
   export let todoIndex = 0;
 
@@ -38,6 +37,12 @@
     todos = todos.filter(t => t.id !== todo.id);
   }
 
+  function toggleTodo(todo) {
+    todo.completed = !todo.completed;
+    var foundIndex = todos.findIndex(t => t.id === todo.id);
+    todos[foundIndex] = todo;
+  }
+
   function toggleAll() {
     todos = todos.map(t => {
       t.completed = !t.completed;
@@ -52,6 +57,9 @@
     }
     return true;
   });
+
+  $: remaining = todos.filter(t => t.completed !== true).length;
+
 </script>
 
 <main>
@@ -59,20 +67,20 @@
 		<section class="todoapp">
 			<header class="header">
 				<h1>todos</h1>
-				<input class="new-todo" {placeholder} bind:value={value} bind:this={ref} on:keypress={onKeyPress}>
+				<input class="new-todo" {placeholder} bind:value={value} on:keypress={onKeyPress}>
 			</header>
 			<section class="main">
 				<input id="toggle-all" class="toggle-all" type="checkbox" on:click={toggleAll}>
 				<label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
           {#each filteredList as todo}
-            <TodoTask removeTodo={removeTodo} {todo} />
+            <TodoTask {removeTodo} {todo} {toggleTodo} />
           {/each}
         </ul>
 			</section>
       {#if todos.length > 0}
         <footer class="footer" >
-          <span class="todo-count">{filteredList.length} {filteredList.length > 1 ? 'items' : 'item'} left</span>
+          <span class="todo-count">{remaining} {filteredList.length > 1 ? 'items' : 'item'} left</span>
           <ul class="filters">
             <li>
               <a href="#/" class:selected={!filteredBy} on:click={showAll}>All</a>
